@@ -1,0 +1,66 @@
+{% load rest_framework %}
+
+<html>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+<style>
+    .column {
+        float: left;
+        width: 33.33%;
+    }
+
+    /* Clear floats after the columns */
+    .row:after {
+        content: "";
+        display: table;
+        clear: both;
+    }
+</style>
+
+
+{% for image in images %}
+{% if forloop.counter0|divisibleby:"3" %}
+<div class='row'>
+    {% endif %}
+    <div class="column">
+        <div style="display:flex;">
+        {% for tag in image.tag.all %}
+            <h3 style="margin-left: 5px;"><span class="label label-default">{{tag}}</span></h3>
+            {% endfor %}
+        </div><div>
+        <img id="{{ forloop.counter }}" width=400 height=400 src="{{image.name.url}}"/>
+        <form action="/rotate/" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input name="id" type="number" style="display: none;" value="{{image.id}}">
+            <button type="submit" class="btn btn-primary">Rotate Left</button>
+            <input name="direction" type="string" style="display: none;" value="left">            
+        </form>
+        <form action="/rotate/" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input name="id" type="number" style="display: none;" value="{{image.id}}">
+            <button type="submit" class="btn btn-primary">Rotate Right</button>
+            <input name="direction" type="string" style="display: none;" value="right">
+        </form></div>
+    </div>
+    {% if forloop.counter0|add:"1"|divisibleby:"3" or forloop.last %}
+</div>
+{% endif %}
+{% endfor %}
+
+<div class="container" style="float: left;">
+    <form action="." method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <h3><span class="label label-default">Add Image</span></h3>
+        <input type="file" id="img" name="img" accept="image/*">
+        <h3><span class="label label-default">Select Tags</span></h3>
+        {% for tag in tags %}
+        <label>{{tag.name}}
+            <input name="tags[]" type="checkbox" value="{{tag.id}}" class="form-check-input">
+        </label>
+        {% endfor %}
+        <div><button type="submit" class="btn btn-success">Add Photo</button></div>
+    </form>
+</div>
+
+</html>
