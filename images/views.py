@@ -56,10 +56,11 @@ class ImageView(APIView):
     
     # @action(methods=['post'], detail=True)
     def post(self,request):
-        img = request.FILES['img']
+        img_list = request.FILES.getlist('img')
         tag_ids = request.POST.getlist('tags[]')
         tags_list = Tag.objects.filter(pk__in=tag_ids)
-        new_image = Image.objects.create(name=img)
-        new_image.tag.set(tags_list)
-        new_image.save()
+        for img in img_list:
+            new_image = Image.objects.create(name=img)
+            new_image.tag.set(tags_list)
+            new_image.save()
         return HttpResponseRedirect(self.request.path_info)

@@ -52,7 +52,7 @@
     <form action="." method="POST" enctype="multipart/form-data">
         {% csrf_token %}
         <h3><span class="label label-default">Add Image</span></h3>
-        <input type="file" id="img" name="img" accept="image/*">
+        <input multiple type="file" id="img" name="img" accept="image/*">
         <h3><span class="label label-default">Select Tags</span></h3>
         {% for tag in tags %}
         <label>{{tag.name}}
